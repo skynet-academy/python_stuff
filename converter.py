@@ -24,13 +24,17 @@ class Converter:
                     )
             cur = conn.cursor()
             #cur.execute(''' CREATE TABLE {} ''')
-            csv_file = open(r'/home/nico/projects/python_stuff/test1.xlsx.csv', 'r')
+            #csv_file = open(r'/home/nico/projects/python_stuff/test1.xlsx.csv', 'r')
+            csv_file = open(r'/home/nico/projects/python_stuff/{}.csv'.format(self.file_name), 'r')
             table_name = 'my_table'
+            cur.execute("TRUNCATE TABLE {};".format(table_name))
             cur.copy_expert("copy {} from STDIN CSV HEADER QUOTE '\"'".format(table_name), csv_file)
             cur.execute("commit;")
             print("the data was loaded into {}!".format(table_name))
             cur.execute("COPY (SELECT * FROM {}) TO '/tmp/result_sql.xlsx' WITH CSV HEADER;".format(table_name))
             print("the query was translated into a excel file")
+            #cur.execute("TRUNCATE TABLE {};".format(table_name))
+            print("The table was cleaned")
             conn.close()
             print("DataBase connection is closed.")
 

@@ -9,7 +9,7 @@ import sys
 
 
 imap_url = 'imap.gmail.com'
-attachment_dir = '/home/nico/projects/python_stuff'
+attachment_dir = '/home/nico/projects/python_stuff/'
 
 
 
@@ -60,8 +60,9 @@ def get_attachments(msg):
             with open(filePath, 'wb') as f:
                 f.write(part.get_payload(decode=True))
 
-        print("The '{}' file was download successfully in path: '{}/' ".format(file_name, attachment_dir))
-    return file_name 
+        print("The '{}' file was download successfully in path: '{}' ".format(file_name, attachment_dir))
+    #return os.path.splitext(file_name)[0]
+    return file_name
 
 
 
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     #msgs = get_emails(search_email('FROM', value, conx ))
     show_email_from()
     email_selected = input("input one number from the list above: ")
-    result, data = conx.fetch(b'186', '(RFC822)')
+    result, data = conx.fetch(b'190', '(RFC822)')
     raw = email.message_from_bytes(data[0][1])
     file_name = get_attachments(raw)
     new_file = Converter(file_name, sheet_name=0)
