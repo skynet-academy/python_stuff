@@ -4,7 +4,9 @@ import imaplib
 import email
 from getpass import getpass
 import os
-from converter import excel_to_csv, csv_to_sql
+from converter import Converter
+import sys
+
 
 imap_url = 'imap.gmail.com'
 attachment_dir = '/home/nico/projects/python_stuff'
@@ -15,23 +17,30 @@ def authentication(imap_url):
     """
     This function authenticate into the email which we want to use using IMAP and SSL conection
     """
-    user = input("put your email: \n")
+    #user = input("put your email: \n")
     #password = input("your password: \n")
-    password = getpass()
+    #password = getpass()
+    user = 'nhspbrusiasv118@gmail.com'
+    password = '123321456britanicO!'
     conx = imaplib.IMAP4_SSL(imap_url)
-    conx.login(user, password)
-    return conx
+    try:
+        conx.login(user, password)
+        print("the connection to {} was successfully!".format(user))
+        return conx
+    except Exception as e:
+        print("Error: {}".format(str(e)))
+        sys.exit(1)
 
 
-def get_body(msg):
-    """
-    This function returns the body of the email
-    """
-    if msg.is_multipart():
-        return get_body(msg.get_payload(0))
-    else:
-        return msg.get_payload(None, True)
-
+#def get_body(msg):
+#    """
+#    This function returns the body of the email
+#    """
+#    if msg.is_multipart():
+#        return get_body(msg.get_payload(0))
+#    else:
+#        return msg.get_payload(None, True)
+#
 
 def get_attachments(msg):
     """
@@ -44,15 +53,15 @@ def get_attachments(msg):
         if part.get('Content-Disposition') is None:
             continue
 
-        fileName = part.get_filename()
+        file_name = part.get_filename()
 
-        if bool(fileName):
-            filePath = os.path.join(attachment_dir, fileName)
+        if bool(file_name):
+            filePath = os.path.join(attachment_dir, file_name)
             with open(filePath, 'wb') as f:
                 f.write(part.get_payload(decode=True))
 
-        print("The '{}' file was download successfully in path: '{}/' ".format(fileName, attachment_dir))
-    return fileName 
+        print("The '{}' file was download successfully in path: '{}/' ".format(file_name, attachment_dir))
+    return file_name 
 
 
 
@@ -90,17 +99,10 @@ if __name__ == '__main__':
 
     #msgs = get_emails(search_email('FROM', value, conx ))
     show_email_from()
-    last_email = input("input one number from the list above: ")
-    result, data = conx.fetch(b'183', '(RFC822)')
+    email_selected = input("input one number from the list above: ")
+    result, data = conx.fetch(b'186', '(RFC822)')
     raw = email.message_from_bytes(data[0][1])
-    fileName = get_attachments(raw)
-    excel_to_csv(fileName, '10_floor')
-
-
-
-
-
-
-
-
-
+    file_name = get_attachments(raw)
+    new_file = Converter(file_name, sheet_name=0)
+    new_file.excel_to_csv()
+    new_file.csv_to_sql()
