@@ -21,7 +21,7 @@ def authentication(imap_url):
     #password = input("your password: \n")
     #password = getpass()
     user = 'nhspbrusiasv118@gmail.com'
-    password = '123321456britanicO!'
+    password = 'mypassword123'
     conx = imaplib.IMAP4_SSL(imap_url)
     try:
         conx.login(user, password)
